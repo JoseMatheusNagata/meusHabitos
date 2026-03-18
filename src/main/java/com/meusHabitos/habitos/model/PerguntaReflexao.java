@@ -1,5 +1,6 @@
 package com.meusHabitos.habitos.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class PerguntaReflexao {
     @Column(nullable = false)
     private Boolean ativa; // Para desativar perguntas que já não quer usar
 
+    @JsonIgnore
     @OneToMany(mappedBy = "pergunta_reflexao")
     private List<RespostaReflexao> respostaReflexao;
 

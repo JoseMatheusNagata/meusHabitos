@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FeelWrite - O seu Diário</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <h2 id="saudacao">Olá!</h2>
+    <button id="btnSair" class="btn-outline">Sair</button>
+</nav>
+
+<div class="container">
+
+    <section class="card">
+        <h3>Os meus Hábitos</h3>
+        <div id="listaHabitos" class="habit-list">
+            <p class="loading">A carregar hábitos...</p>
+        </div>
+    </section>
+
+    <section class="card">
+        <h3>Reflexão do Dia</h3>
+        <div id="areaReflexao">
+            <p id="perguntaTexto" class="pergunta-destaque">A carregar pergunta...</p>
+
+            <form id="formReflexao">
+                <textarea id="respostaTexto" placeholder="Escreva aqui a sua reflexão..." rows="4" required></textarea>
+                <button type="submit" class="btn-primary">Guardar Reflexão</button>
+            </form>
+            <div id="mensagemReflexao"></div>
+        </div>
+    </section>
+
+</div>
+
+<script src="js/dashboard.js"></script>
+</body>
+</html>

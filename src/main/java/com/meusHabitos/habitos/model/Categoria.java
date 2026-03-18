@@ -1,5 +1,6 @@
 package com.meusHabitos.habitos.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class Categoria {
     @Column(nullable = false)
     private String nome;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "categoria")
     private List<Habito> habitos;
 

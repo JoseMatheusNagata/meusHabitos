@@ -1,5 +1,6 @@
 package com.meusHabitos.habitos.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -31,6 +32,7 @@ public class Habito {
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "habito")
     private List<RegistroHabito> registroHabitos;
 

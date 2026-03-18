@@ -3,6 +3,7 @@ package com.meusHabitos.habitos.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "usuarios")
@@ -25,9 +26,11 @@ public class Usuario {
     private LocalDate dataCriacao;
 
     // Um Usuário tem Muitos Hábitos
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario")
     private List<Habito> habitos;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario")
     private List<RespostaReflexao> respostaReflexao;
 
