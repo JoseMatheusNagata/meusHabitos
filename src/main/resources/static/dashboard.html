@@ -16,9 +16,22 @@
 <div class="container">
 
     <section class="card">
-        <h3>Os meus Hábitos</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f2f5; margin-bottom: 20px; padding-bottom: 10px;">
+            <h3 style="border: none; margin: 0; padding: 0;">Os meus Hábitos</h3>
+            <button id="btnNovoHabito" class="btn-outline">+ Novo Hábito</button>
+        </div>
+
+        <form id="formNovoHabito" class="form-novo-habito" style="display: none;">
+            <input type="text" id="nomeHabito" placeholder="Nome do hábito (ex: Ler 10 páginas)" required>
+            <input type="text" id="descHabito" placeholder="Descrição curta (opcional)">
+            <select id="categoriaHabito" required>
+                <option value="" disabled selected>Selecione uma categoria...</option>
+            </select>
+            <button type="submit" class="btn-primary" style="width: 100%;">Salvar Hábito</button>
+        </form>
+
         <div id="listaHabitos" class="habit-list">
-            <p class="loading">A carregar hábitos...</p>
+            <p class="loading">Carregando hábitos...</p>
         </div>
     </section>
 
