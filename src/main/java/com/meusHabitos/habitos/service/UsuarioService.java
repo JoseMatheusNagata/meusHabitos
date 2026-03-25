@@ -24,4 +24,9 @@ public class UsuarioService {
         // Aqui no futuro você pode colocar regras, como criptografar a senha!
         return usuarioRepository.save(usuario);
     }
+
+    // metodo para autenticar usuario recebe email e senha
+    public Usuario autenticar(String email, String senha) {
+        return usuarioRepository.findByEmailAndSenha(email, senha).orElse(null);
+    }
 }

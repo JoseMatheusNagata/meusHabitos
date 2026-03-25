@@ -88,3 +88,19 @@ body {
 }
 .sucesso { color: #2ecc71; }
 .erro { color: #e74c3c; }
+
+.toggle-text {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.toggle-text a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.toggle-text a:hover {
+    text-decoration: underline;
+}
