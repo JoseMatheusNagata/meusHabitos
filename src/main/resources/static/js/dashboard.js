@@ -6,6 +6,8 @@ const btnNovoHabito = document.getElementById('btnNovoHabito');
 const formNovoHabito = document.getElementById('formNovoHabito');
 const selectCategoria = document.getElementById('categoriaHabito');
 
+let dataVisualizacao = new Date(); // Começa no dia de hoje
+
 if (!usuarioId) {
     // Se não houver ID no LocalStorage, expulsa para o login
     window.location.href = "index.html";
@@ -42,7 +44,7 @@ function carregarHabitos() {
             }
 
             // Pega a data de hoje no formato "YYYY-MM-DD" (Ex: "2026-03-25")
-            const hoje = new Date().toISOString().split('T')[0];
+            const dataSelecionada = getDataFormatada(dataVisualizacao);
 
             meusHabitos.forEach(habito => {
                 const item = document.createElement('div');
@@ -70,14 +72,14 @@ function carregarHabitos() {
                 const textoCheck = document.createElement('span');
                 textoCheck.className = 'texto-checkbox';
 
-                // Procura nos registos se existe algum de HOJE, para ESTE hábito, que esteja FEITO
-                const feitoHoje = registos.find(r =>
+                // Procura nos registos se existe algum para a DATA SELECIONADA
+                const feitoNaData = registos.find(r =>
                     r.habito.id === habito.id &&
-                    r.dataRegistro === hoje &&
+                    r.dataRegistro === dataSelecionada &&
                     r.feito === true
                 );
 
-                if (feitoHoje) {
+                if (feitoNaData) {
                     // Se encontrou
                     checkbox.checked = true;
                     checkbox.disabled = true;
@@ -111,6 +113,7 @@ function carregarHabitos() {
 window.marcarFeito = function(idDoHabito, elementoCheckbox, elementoTexto) {
     const registo = {
         feito: true,
+        dataRegistro: getDataFormatada(dataVisualizacao), //Envia a data que está na tela
         habito: { id: idDoHabito }
     };
 
@@ -236,6 +239,36 @@ function carregarCategorias() {
         .catch(error => console.error("Erro ao carregar categorias:", error));
 }
 
+// Função para pegar a data no formato "YYYY-MM-DD" de forma segura (sem bugar com fuso horário)
+function getDataFormatada(data) {
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const dia = String(data.getDate()).padStart(2, '0');
+    return `${ano}-${mes}-${dia}`;
+}
+
+// Função para escrever "Hoje", "Ontem" ou a data exata (ex: 25/03/2026)
+function atualizarTextoData() {
+    const hoje = new Date();
+    const ontem = new Date(); ontem.setDate(hoje.getDate() - 1);
+    const amanha = new Date(); amanha.setDate(hoje.getDate() + 1);
+
+    const txtData = document.getElementById('textoDataAtual');
+    const formatoVisualizacao = getDataFormatada(dataVisualizacao);
+
+    if (formatoVisualizacao === getDataFormatada(hoje)) {
+        txtData.textContent = "Hoje";
+    } else if (formatoVisualizacao === getDataFormatada(ontem)) {
+        txtData.textContent = "Ontem";
+    } else if (formatoVisualizacao === getDataFormatada(amanha)) {
+        txtData.textContent = "Amanhã";
+    } else {
+        // Se for outra data, mostra no formato DD/MM/YYYY
+        txtData.textContent = dataVisualizacao.toLocaleDateString('pt-BR');
+    }
+}
+
+
 // Submeter o novo hábito
 formNovoHabito.addEventListener('submit', function(event) {
     event.preventDefault();
@@ -267,6 +300,19 @@ formNovoHabito.addEventListener('submit', function(event) {
                 alert("Erro ao criar hábito.");
             }
         });
+});
+
+// Ligar os botões de avançar e retroceder
+document.getElementById('btnDiaAnterior').addEventListener('click', () => {
+    dataVisualizacao.setDate(dataVisualizacao.getDate() - 1);
+    atualizarTextoData();
+    carregarHabitos(); // Recarrega os dados do banco para o novo dia!
+});
+
+document.getElementById('btnDiaProximo').addEventListener('click', () => {
+    dataVisualizacao.setDate(dataVisualizacao.getDate() + 1);
+    atualizarTextoData();
+    carregarHabitos();
 });
 // INICIALIZAÇÃO
 

@@ -145,3 +145,30 @@ textarea {
     color: #7f8c8d;
     transition: all 0.3s;
 }
+
+.date-navigator {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-nav {
+    background-color: #f0f2f5;
+    border: none;
+    color: #34495e;
+    font-size: 18px;
+    font-weight: bold;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-nav:hover {
+    background-color: #3498db;
+    color: white;
+}
