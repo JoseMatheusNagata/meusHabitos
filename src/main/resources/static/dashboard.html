@@ -43,8 +43,12 @@
     <section class="card">
         <h3>Reflexão do Dia</h3>
         <div id="areaReflexao">
-            <p id="perguntaTexto" class="pergunta-destaque">A carregar pergunta...</p>
 
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <button id="btnPerguntaAnterior" class="btn-nav">&lt;</button>
+                <p id="perguntaTexto" class="pergunta-destaque" style="margin: 0; text-align: center; flex: 1;">A carregar pergunta...</p>
+                <button id="btnPerguntaProxima" class="btn-nav">&gt;</button>
+            </div>
             <form id="formReflexao">
                 <textarea id="respostaTexto" placeholder="Escreva aqui a sua reflexão..." rows="4" required></textarea>
                 <button type="submit" class="btn-primary">Guardar Reflexão</button>

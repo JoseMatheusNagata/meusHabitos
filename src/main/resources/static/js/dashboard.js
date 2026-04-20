@@ -144,27 +144,122 @@ window.marcarFeito = function(idDoHabito, elementoCheckbox, elementoTexto) {
     });
 };
 
-// ==========================================
-// 6. Carregar a Pergunta do Dia
-// ==========================================
+// 6. Carregar a Pergunta do Dia (Com Navegação)
 let perguntaAtualId = null;
+let listaPerguntas = [];
+let indicePerguntaAtual = 0;
 
 function carregarPergunta() {
-    fetch('http://localhost:8080/perguntas')
+    fetch('/perguntas')
         .then(response => response.json())
         .then(perguntas => {
-            // Procura a primeira pergunta que esteja "ativa" (ou apanha a primeira da lista)
-            const perguntaAtiva = perguntas.find(p => p.ativa === true) || perguntas[0];
+            // Guarda apenas as perguntas que estão "ativas"
+            listaPerguntas = perguntas.filter(p => p.ativa === true);
 
-            if (perguntaAtiva) {
-                document.getElementById('perguntaTexto').textContent = perguntaAtiva.texto;
-                perguntaAtualId = perguntaAtiva.id; // Guarda o ID para usarmos na hora de salvar a resposta
+            if (listaPerguntas.length > 0) {
+                indicePerguntaAtual = 0; // Começa na primeira pergunta
+                mostrarPerguntaNoEcra();
             } else {
-                document.getElementById('perguntaTexto').textContent = "Não há perguntas configuradas para hoje.";
-                document.getElementById('formReflexao').style.display = 'none'; // Esconde o campo de texto
+                document.getElementById('perguntaTexto').textContent = "Não há perguntas configuradas.";
+                document.getElementById('formReflexao').style.display = 'none';
+                document.getElementById('btnPerguntaAnterior').style.display = 'none';
+                document.getElementById('btnPerguntaProxima').style.display = 'none';
             }
         })
         .catch(error => console.error("Erro ao buscar perguntas:", error));
+}
+
+// Função para atualizar o texto no ecrã sempre que mudamos de pergunta
+function mostrarPerguntaNoEcra() {
+    const pergunta = listaPerguntas[indicePerguntaAtual];
+    document.getElementById('perguntaTexto').textContent = pergunta.texto;
+    perguntaAtualId = pergunta.id;
+
+    buscarRespostaSalva();
+}
+
+// Ligar o botão "Anterior" (<)
+document.getElementById('btnPerguntaAnterior').addEventListener('click', () => {
+    if (listaPerguntas.length > 0) {
+        indicePerguntaAtual--; // Volta uma casa
+
+        // Se passar da primeira pergunta (menor que zero), vai para a última (cria um "Loop")
+        if (indicePerguntaAtual < 0) {
+            indicePerguntaAtual = listaPerguntas.length - 1;
+        }
+        mostrarPerguntaNoEcra();
+    }
+});
+
+// Ligar o botão "Próximo" (>)
+document.getElementById('btnPerguntaProxima').addEventListener('click', () => {
+    if (listaPerguntas.length > 0) {
+        indicePerguntaAtual++; // Avança uma casa
+
+        // Se passar da última pergunta, volta para a primeira (cria um "Loop")
+        if (indicePerguntaAtual >= listaPerguntas.length) {
+            indicePerguntaAtual = 0;
+        }
+        mostrarPerguntaNoEcra();
+    }
+});
+
+// 6.5 Buscar Resposta Salva
+function buscarRespostaSalva() {
+    const dataSelecionada = getDataFormatada(dataVisualizacao);
+    const textarea = document.getElementById('respostaTexto');
+    const mensagemDiv = document.getElementById('mensagemReflexao');
+    const btnSalvar = document.querySelector('#formReflexao button[type="submit"]');
+
+    textarea.placeholder = "A procurar a sua resposta...";
+    textarea.value = "";
+    mensagemDiv.textContent = "";
+
+    // Coloquei o endereço completo provisoriamente para evitar falhas de rota
+    fetch('http://localhost:8080/respostas')
+        .then(response => response.json())
+        .then(respostas => {
+            const respostaSalva = respostas.find(r => {
+                // Previne que o código quebre se vier algo vazio do Java
+                if (!r || !r.usuario) return false;
+
+                // 1. Força os IDs a serem texto (String) para evitar erros de comparação (1 vs '1')
+                const idUser = String(r.usuario.id);
+                const idPergunta = r.pergunta_reflexao ? String(r.pergunta_reflexao.id) : (r.perguntaReflexao ? String(r.perguntaReflexao.id) : null);
+
+                // 2. Normaliza a data (Trata Arrays ou Textos com 'T')
+                let dataDoJava = r.dataRegistro || r.data_registro;
+
+                if (Array.isArray(dataDoJava)) {
+                    // Se o Java enviou um array [YYYY, MM, DD]
+                    const mes = String(dataDoJava[1]).padStart(2, '0');
+                    const dia = String(dataDoJava[2]).padStart(2, '0');
+                    dataDoJava = `${dataDoJava[0]}-${mes}-${dia}`;
+                } else if (typeof dataDoJava === 'string' && dataDoJava.includes('T')) {
+                    // Se o Java enviou algo como "2026-03-25T00:00:00"
+                    dataDoJava = dataDoJava.split('T')[0];
+                }
+
+                // 3. Verifica se tudo bate certo!
+                return idUser === String(usuarioId) &&
+                       idPergunta === String(perguntaAtualId) &&
+                       dataDoJava === dataSelecionada;
+            });
+
+            if (respostaSalva) {
+                textarea.value = respostaSalva.resposta;
+                mensagemDiv.textContent = "A exibir reflexão guardada.";
+                mensagemDiv.style.color = "#7f8c8d";
+            } else {
+                textarea.placeholder = "Escreva aqui a sua reflexão...";
+                textarea.disabled = false;
+                btnSalvar.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao carregar resposta:", error);
+            textarea.placeholder = "Erro ao carregar dados.";
+        });
 }
 
 // ==========================================
@@ -179,31 +274,26 @@ document.getElementById('formReflexao').addEventListener('submit', function(even
     // Monta o JSON exatamente como fizemos no Swagger
     const novaReflexao = {
         resposta: textoDigitado,
+        dataRegistro: getDataFormatada(dataVisualizacao),
         usuario: { id: usuarioId },
         pergunta_reflexao: { id: perguntaAtualId }
     };
-
-    fetch('http://localhost:8080/respostas', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(novaReflexao)
-    })
+    fetch('/respostas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(novaReflexao)
+        })
         .then(response => {
             if (response.ok) {
                 mensagemDiv.textContent = "Reflexão guardada com sucesso! 💙";
                 mensagemDiv.style.color = "#2ecc71";
-                document.getElementById('respostaTexto').value = ""; // Limpa a caixa de texto
+
+                buscarRespostaSalva();
             } else {
                 throw new Error("Erro ao guardar a reflexão.");
             }
         })
-        .catch(error => {
-            mensagemDiv.textContent = "Erro ao guardar. Tente novamente.";
-            mensagemDiv.style.color = "#e74c3c";
-            console.error(error);
-        });
+
 });
 
 btnNovoHabito.addEventListener('click', () => {
@@ -307,12 +397,14 @@ document.getElementById('btnDiaAnterior').addEventListener('click', () => {
     dataVisualizacao.setDate(dataVisualizacao.getDate() - 1);
     atualizarTextoData();
     carregarHabitos(); // Recarrega os dados do banco para o novo dia!
+    buscarRespostaSalva();
 });
 
 document.getElementById('btnDiaProximo').addEventListener('click', () => {
     dataVisualizacao.setDate(dataVisualizacao.getDate() + 1);
     atualizarTextoData();
     carregarHabitos();
+    buscarRespostaSalva();
 });
 // INICIALIZAÇÃO
 
