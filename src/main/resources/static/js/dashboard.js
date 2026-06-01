@@ -26,8 +26,8 @@ document.getElementById('btnSair').addEventListener('click', () => {
 function carregarHabitos() {
     // Promise.all permite fazer 2 ou mais "fetches" ao mesmo tempo!
     Promise.all([
-        fetch('http://localhost:8080/habitos').then(res => res.json()),
-        fetch('http://localhost:8080/registos-habito').then(res => res.json())
+        fetch('/habitos').then(res => res.json()),
+        fetch('/registos-habito').then(res => res.json())
     ])
         .then(([habitos, registos]) => {
             // Filtra os hábitos para mostrar apenas os deste utilizador
@@ -120,7 +120,7 @@ window.marcarFeito = function(idDoHabito, elementoCheckbox, elementoTexto) {
     // Altera o texto enquanto o Java processa
     elementoTexto.textContent = 'A guardar...';
 
-    fetch('http://localhost:8080/registos-habito', {
+    fetch('/registos-habito', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(registo)
@@ -216,7 +216,7 @@ function buscarRespostaSalva() {
     mensagemDiv.textContent = "";
 
     // Coloquei o endereço completo provisoriamente para evitar falhas de rota
-    fetch('http://localhost:8080/respostas')
+    fetch('/respostas')
         .then(response => response.json())
         .then(respostas => {
             const respostaSalva = respostas.find(r => {
@@ -313,7 +313,7 @@ btnNovoHabito.addEventListener('click', () => {
 
 // Função para buscar as categorias no Java
 function carregarCategorias() {
-    fetch('http://localhost:8080/categorias')
+    fetch('/categorias')
         .then(response => response.json())
         .then(categorias => {
             selectCategoria.length = 1;
@@ -374,7 +374,7 @@ formNovoHabito.addEventListener('submit', function(event) {
         categoria: { id: parseInt(categoriaId) } // Pega o ID da categoria selecionada
     };
 
-    fetch('http://localhost:8080/habitos', {
+    fetch('/habitos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(novoHabito)

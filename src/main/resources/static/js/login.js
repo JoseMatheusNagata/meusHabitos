@@ -41,7 +41,7 @@ document.getElementById('formRegisto').addEventListener('submit', function(event
     mensagemDiv.textContent = "A processar...";
     mensagemDiv.className = "";
 
-    fetch('http://localhost:8080/usuarios', {
+    fetch('/usuarios', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
