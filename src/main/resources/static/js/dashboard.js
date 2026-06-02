@@ -248,7 +248,7 @@ function buscarRespostaSalva() {
 
             if (respostaSalva) {
                 textarea.value = respostaSalva.resposta;
-                mensagemDiv.textContent = "A exibir reflexão guardada.";
+                mensagemDiv.textContent = "Exibindo reflexão.";
                 mensagemDiv.style.color = "#7f8c8d";
             } else {
                 textarea.placeholder = "Escreva aqui a sua reflexão...";
@@ -285,7 +285,7 @@ document.getElementById('formReflexao').addEventListener('submit', function(even
         })
         .then(response => {
             if (response.ok) {
-                mensagemDiv.textContent = "Reflexão guardada com sucesso! 💙";
+                mensagemDiv.textContent = "Reflexão guardada com sucesso!";
                 mensagemDiv.style.color = "#2ecc71";
 
                 buscarRespostaSalva();
