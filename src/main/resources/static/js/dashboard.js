@@ -211,7 +211,7 @@ function buscarRespostaSalva() {
     const mensagemDiv = document.getElementById('mensagemReflexao');
     const btnSalvar = document.querySelector('#formReflexao button[type="submit"]');
 
-    textarea.placeholder = "A procurar a sua resposta...";
+    textarea.placeholder = "Procurando sua resposta...";
     textarea.value = "";
     mensagemDiv.textContent = "";
 
