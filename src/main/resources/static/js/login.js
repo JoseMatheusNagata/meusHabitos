@@ -85,7 +85,7 @@ formLogin.addEventListener('submit', function(event) {
     mensagemDiv.textContent = "A autenticar...";
     mensagemDiv.className = "";
 
-    fetch('http://localhost:8080/usuarios/login', {
+    fetch('/usuarios/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dadosLogin)
