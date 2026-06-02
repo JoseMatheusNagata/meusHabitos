@@ -19,7 +19,7 @@ linkLogin.addEventListener('click', (e) => {
     e.preventDefault();
     formRegisto.style.display = 'none';
     formLogin.style.display = 'block';
-    subtitulo.textContent = 'Faça login para aceder ao seu diário.';
+    subtitulo.textContent = 'Faça login para acessar o seu diário.';
     mensagemDiv.textContent = '';
 });
 
@@ -38,7 +38,7 @@ document.getElementById('formRegisto').addEventListener('submit', function(event
         senha: senha
     };
 
-    mensagemDiv.textContent = "A processar...";
+    mensagemDiv.textContent = "Processando...";
     mensagemDiv.className = "";
 
     fetch('/usuarios', {
@@ -56,7 +56,7 @@ document.getElementById('formRegisto').addEventListener('submit', function(event
             }
         })
         .then(data => {
-            mensagemDiv.textContent = "Conta criada com sucesso! A redirecionar...";
+            mensagemDiv.textContent = "Conta criada com sucesso! Redirecionando...";
             mensagemDiv.className = "sucesso";
 
             localStorage.setItem('usuarioId', data.id);
@@ -96,7 +96,7 @@ formLogin.addEventListener('submit', function(event) {
             return response.json();
         })
         .then(data => {
-            mensagemDiv.textContent = "Login efetuado com sucesso! A redirecionar...";
+            mensagemDiv.textContent = "Login efetuado com sucesso! Redirecionando...";
             mensagemDiv.className = "sucesso";
             localStorage.setItem('usuarioId', data.id);
             localStorage.setItem('usuarioNome', data.nome);
